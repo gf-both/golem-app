@@ -113,8 +113,10 @@ export default function EgyptianDetail() {
     <div style={S.panel}>
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{SIGN_GLYPHS[P.sign] || '\u2726'} Egyptian Astrology</div>
-        <AboutSystemButton systemName="Egyptian Astrology" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{SIGN_GLYPHS[P.sign] || '\u2726'} Egyptian Astrology</div>
+          <AboutSystemButton systemName="Egyptian Astrology" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Ancient Egyptian zodiac signs, deity archetypes, elemental alignments, and divine compatibility
         </div>

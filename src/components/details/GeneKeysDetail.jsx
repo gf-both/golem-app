@@ -414,8 +414,10 @@ export default function GeneKeysDetail() {
     <div style={S.panel}>
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{'\u2B21'} Gene Keys</div>
-        <AboutSystemButton systemName="Gene Keys" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{'\u2B21'} Gene Keys</div>
+          <AboutSystemButton systemName="Gene Keys" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic', marginTop: 8 }}>
           Hologenetic Profile — {allSpheres.length} keys across three sequences
         </div>

@@ -578,13 +578,13 @@ export default function SyncDetail() {
 
   return (
     <div style={S.panel}>
-      {/* About Button */}
-      <AboutSystemButton systemName="Synchronicities" />
-
       {/* Header */}
       <div>
-        <div style={{ fontFamily: "'Cinzel', serif", fontSize: 18, letterSpacing: '.18em', color: 'var(--foreground)', marginBottom: 4 }}>
-          SYNCHRONICITY LOG
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontFamily: "'Cinzel', serif", fontSize: 18, letterSpacing: '.18em', color: 'var(--foreground)', marginBottom: 4 }}>
+            SYNCHRONICITY LOG
+          </div>
+          <AboutSystemButton systemName="Synchronicities" />
         </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
           Jung called them acausal connecting principles — events with no causal link yet an undeniable meaning. Log what you notice. The patterns will speak.

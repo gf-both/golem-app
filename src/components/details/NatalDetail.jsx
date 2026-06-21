@@ -274,8 +274,10 @@ export default function NatalDetail() {
     <div style={S.panel}>
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{'\u2609'} Natal Astrology</div>
-        <AboutSystemButton systemName="Natal Astrology" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{'\u2609'} Natal Astrology</div>
+          <AboutSystemButton systemName="Natal Astrology" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Full birth chart analysis — planets, houses, aspects, rising sign, and elemental balance
         </div>

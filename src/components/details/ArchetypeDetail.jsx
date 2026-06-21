@@ -236,9 +236,14 @@ function ArchetypeQuiz() {
           }}>Saved to your profile</div>
         )}
         <div onClick={reset} style={{
-          padding: '8px 20px', borderRadius: 8, background: '#b8860b',
-          border: '2px solid #d4a017', cursor: 'pointer', alignSelf: 'center',
-          fontFamily: "'Cinzel', serif", fontSize: 10, fontWeight: 700, letterSpacing: '.1em', color: '#fff',
+          padding: '12px 28px', borderRadius: 10, cursor: 'pointer', alignSelf: 'center',
+          fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+          letterSpacing: '.14em', textTransform: 'uppercase',
+          background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+          border: '2px solid rgba(201,168,76,.8)',
+          color: '#fff',
+          transition: 'all .2s', position: 'relative', zIndex: 2,
+          boxShadow: '0 2px 12px rgba(201,168,76,.25)',
         }}>Retake Quiz</div>
       </div>
     )
@@ -326,20 +331,21 @@ export default function ArchetypeDetail() {
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={S.heading}>{'\u2726'} Jungian Archetypes</div>
-          <span
+          <button
             onClick={() => setShowQuiz(!showQuiz)}
             style={{
-              fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: '.15em',
-              textTransform: 'uppercase', color: '#c9a84c', cursor: 'pointer',
-              padding: '5px 14px', borderRadius: 14,
-              border: '1px solid rgba(201,168,76,.3)', background: 'rgba(201,168,76,.06)',
-              transition: 'all .2s',
+              padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+              fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+              letterSpacing: '.14em', textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+              border: '2px solid rgba(201,168,76,.8)',
+              color: '#fff',
+              transition: 'all .2s', position: 'relative', zIndex: 2,
+              boxShadow: '0 2px 12px rgba(201,168,76,.25)',
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,.5)'; e.currentTarget.style.background = 'rgba(201,168,76,.12)' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,.3)'; e.currentTarget.style.background = 'rgba(201,168,76,.06)' }}
           >
-            {showQuiz ? 'Cancel' : 'Retake Quiz'}
-          </span>
+            {showQuiz ? "Cancel" : "Retake Quiz"}
+          </button>
         </div>
         <AboutSystemButton systemName="Archetype" />
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>

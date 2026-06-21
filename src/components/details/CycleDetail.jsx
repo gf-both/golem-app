@@ -88,13 +88,13 @@ export default function CycleDetail() {
 
   return (
     <div style={S.panel}>
-      {/* About Button */}
-      <AboutSystemButton systemName="Cycle" />
-
       {/* Header */}
       <div>
-        <div style={{ fontFamily: "'Cinzel',serif", fontSize: 18, letterSpacing: '.18em', color: 'var(--foreground)', marginBottom: 4 }}>
-          CYCLE · MOON PHASES
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontFamily: "'Cinzel',serif", fontSize: 18, letterSpacing: '.18em', color: 'var(--foreground)', marginBottom: 4 }}>
+            CYCLE · MOON PHASES
+          </div>
+          <AboutSystemButton systemName="Cycle" />
         </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
           Your menstrual cycle mapped to lunar rhythms. Ancient wisdom meets modern tracking.

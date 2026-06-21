@@ -129,16 +129,21 @@ function DoshaQuiz() {
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8 }}>
           <button onClick={handleSave} style={{
-            padding: '10px 24px', borderRadius: 8, border: '2px solid #d4a017',
-            background: '#b8860b', color: '#fff', fontWeight: 700,
-            fontFamily: "'Cinzel',serif", fontSize: 11, letterSpacing: '.15em', cursor: 'pointer',
-            textTransform: 'uppercase', boxShadow: '0 0 16px rgba(201,168,76,.35)',
+            padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+            fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+            letterSpacing: '.14em', textTransform: 'uppercase',
+            background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+            border: '2px solid rgba(201,168,76,.8)',
+            color: '#fff',
+            transition: 'all .2s', position: 'relative', zIndex: 2,
+            boxShadow: '0 2px 12px rgba(201,168,76,.25)',
           }}>Save Result</button>
           <button onClick={handleRetake} style={{
-            padding: '10px 24px', borderRadius: 8, border: '2px solid #444',
-            background: '#1a1a2e', color: '#999', fontWeight: 700,
-            fontFamily: "'Cinzel',serif", fontSize: 11, letterSpacing: '.15em', cursor: 'pointer',
-            textTransform: 'uppercase',
+            padding: '12px 22px', borderRadius: 10, cursor: 'pointer',
+            fontSize: 12, fontFamily: '"Cinzel", serif', fontWeight: 600,
+            letterSpacing: '.12em', textTransform: 'uppercase',
+            background: 'var(--secondary)', border: '1px solid var(--border)',
+            color: 'var(--muted-foreground)', transition: 'all .15s',
           }}>Retake</button>
         </div>
       </div>
@@ -315,11 +320,15 @@ export default function DoshaDetail() {
           </div>
           {doshaType && (
             <button onClick={() => setShowQuiz(!showQuiz)} style={{
-              padding: '8px 18px', borderRadius: 8, border: '2px solid #d4a017',
-              background: '#b8860b', color: '#fff', fontWeight: 700,
-              fontFamily: "'Cinzel',serif", fontSize: 10, letterSpacing: '.12em', cursor: 'pointer',
-              textTransform: 'uppercase',
-            }}>{showQuiz ? 'Close Quiz' : 'Retake Quiz'}</button>
+              padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+              fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+              letterSpacing: '.14em', textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+              border: '2px solid rgba(201,168,76,.8)',
+              color: '#fff',
+              transition: 'all .2s', position: 'relative', zIndex: 2,
+              boxShadow: '0 2px 12px rgba(201,168,76,.25)',
+            }}>{showQuiz ? "Close Quiz" : "Retake Quiz"}</button>
           )}
         </div>
         <div style={S.monoSm}>Ayurvedic Constitution Analysis</div>

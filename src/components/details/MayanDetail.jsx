@@ -291,8 +291,10 @@ export default function MayanDetail() {
 
       {/* HEADER */}
       <div>
-        <div style={S.heading}>Mayan Calendar</div>
-        <AboutSystemButton systemName="Mayan Calendar" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>Mayan Calendar</div>
+          <AboutSystemButton systemName="Mayan Calendar" />
+        </div>
       </div>
 
       {/* ══════════════════════════════════════════

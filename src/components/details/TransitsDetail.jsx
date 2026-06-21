@@ -225,8 +225,10 @@ export default function TransitsDetail() {
 
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{'☿'} Planetary Transits</div>
-        <AboutSystemButton systemName="Transits" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{'☿'} Planetary Transits</div>
+          <AboutSystemButton systemName="Transits" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           {todayLabel} — Current sky positions and natal aspects for {profile?.name || 'your chart'}
         </div>

@@ -18,7 +18,8 @@ export default function SynastryDetail() {
           background: transparent !important;
         }
       `}</style>
-      <div style={{ padding: '12px 20px 0' }}>
+      <div style={{ padding: '12px 20px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div>Synastry</div>
         <AboutSystemButton systemName="Synastry" />
       </div>
       <div className="synastry-detail-embed" style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>

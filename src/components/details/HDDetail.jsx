@@ -452,7 +452,7 @@ function RavechartTab({ chart }) {
         </div>
 
         {/* CENTER: Bodygraph */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', overflow: 'hidden', minHeight: 440 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', overflow: 'visible', minHeight: 440 }}>
           <HumanDesign />
         </div>
 
@@ -739,9 +739,12 @@ export default function HDDetail() {
 
   return (
     <div style={S.panel}>
-      {/* ABOUT + TAB BAR */}
-      <div style={{ padding: '12px 16px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <AboutSystemButton systemName="Human Design" />
+      {/* HEADER */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '16px 16px 0' }}>
+          <div style={S.sectionTitle}>Human Design</div>
+          <AboutSystemButton systemName="Human Design" />
+        </div>
       </div>
       <div style={S.tabBar}>
         {TABS.map(t => (

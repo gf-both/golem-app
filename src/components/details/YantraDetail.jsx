@@ -246,9 +246,11 @@ export default function YantraDetail() {
   return (
     <div style={S.panel}>
       {/* HEADER */}
-      <AboutSystemButton systemName="Yantra" />
       <div>
-        <div style={S.heading}>{'\u25C7'} Yantra — Sacred Geometry</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{'\u25C7'} Yantra — Sacred Geometry</div>
+          <AboutSystemButton systemName="Yantra" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Vedic-timed creation · Hora · Tithi · Planetary alignment
         </div>

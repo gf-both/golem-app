@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { SEPHIROTH, PATHS } from '../../data/kabbalahData'
 import { getKabbalahProfile, profileToKabArgs } from '../../engines/kabbalahEngine'
 import { useComputedProfile as useActiveProfile } from '../../hooks/useActiveProfile'
@@ -86,20 +86,29 @@ const SEPH_TOOLTIPS = {
 /* ─── Kabbalah Tooltip component ─────────────────────────────────────────── */
 function KabTooltip({ data, children }) {
   const [show, setShow] = useState(false)
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+  const ref = useRef(null)
   if (!data) return children
+  const handleEnter = () => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect()
+      setPos({ x: rect.left + rect.width / 2, y: rect.top })
+    }
+    setShow(true)
+  }
   return (
-    <div style={{ position: 'relative' }}
-      onMouseEnter={() => setShow(true)}
+    <div ref={ref} style={{ position: 'relative' }}
+      onMouseEnter={handleEnter}
       onMouseLeave={() => setShow(false)}
     >
       {children}
       {show && (
         <div style={{
-          position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)',
+          position: 'fixed', left: Math.max(10, pos.x - 150), top: Math.max(10, pos.y - 180),
           width: 300, padding: '14px 16px', borderRadius: 10,
           background: 'var(--popover)', border: '1px solid rgba(201,168,76,.2)',
-          backdropFilter: 'blur(20px)', zIndex: 999, pointerEvents: 'none',
-          boxShadow: '0 8px 32px rgba(0,0,0,.5)', marginBottom: 6,
+          backdropFilter: 'blur(20px)', zIndex: 9999, pointerEvents: 'none',
+          boxShadow: '0 8px 32px rgba(0,0,0,.5)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
             <span style={{ fontSize: 20, fontFamily: 'serif', color: '#c9a84c' }}>{data.hebrew}</span>
@@ -117,7 +126,6 @@ function KabTooltip({ data, children }) {
               <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, background: 'rgba(204,68,68,.1)', color: '#cc6666', border: '1px solid rgba(204,68,68,.2)' }}>Vice: {data.vice}</span>
             )}
           </div>
-          <div style={{ position: 'absolute', bottom: -5, left: '50%', transform: 'translateX(-50%) rotate(45deg)', width: 10, height: 10, background: 'var(--popover)', borderRight: '1px solid rgba(201,168,76,.2)', borderBottom: '1px solid rgba(201,168,76,.2)' }} />
         </div>
       )}
     </div>
@@ -238,8 +246,10 @@ const kabArgs = profileToKabArgs(profile)
     <div style={S.panel}>
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{'\u2721'} Kabbalah</div>
-        <AboutSystemButton systemName="Kabbalah" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{'\u2721'} Kabbalah</div>
+          <AboutSystemButton systemName="Kabbalah" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Tree of Life -- Sephiroth, pillars, paths, and the hidden Da'ath
         </div>
@@ -249,7 +259,7 @@ const kabArgs = profileToKabArgs(profile)
       <div>
         <div style={S.sectionTitle}>Tree of Life</div>
         <div style={{
-          ...S.glass, padding: 0, overflow: 'hidden',
+          ...S.glass, padding: 0, overflow: 'visible',
           height: 480, position: 'relative',
         }}>
           <KabbalahTree />

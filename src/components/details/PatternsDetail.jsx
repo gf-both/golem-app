@@ -140,9 +140,11 @@ export default function PatternsDetail() {
     <div style={S.panel}>
 
       {/* ═══ HEADER ═══ */}
-      <AboutSystemButton systemName="Patterns" />
       <div>
-        <div style={S.heading}>{'\u2B21'} Your Pattern Map</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{'\u2B21'} Your Pattern Map</div>
+          <AboutSystemButton systemName="Patterns" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic', marginBottom: 12 }}>
           Cross-framework alignments, synchronicities, and hidden correlations across all your esoteric systems
         </div>

@@ -110,10 +110,12 @@ export default function TibetanDetail() {
 
   return (
     <div style={S.panel}>
-      <AboutSystemButton systemName="Tibetan Astrology" />
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{ANIMAL_EMOJI[tib.animal]} Tibetan Astrology</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{ANIMAL_EMOJI[tib.animal]} Tibetan Astrology</div>
+          <AboutSystemButton systemName="Tibetan Astrology" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Jungtsi tradition: birth animal, element, mewa number, and yin-yang polarity
         </div>

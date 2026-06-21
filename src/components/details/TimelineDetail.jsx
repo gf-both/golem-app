@@ -531,20 +531,20 @@ export default function TimelineDetail() {
     }}>
       {/* Header */}
       <div style={{ marginBottom: 16, textAlign: 'center' }}>
-        <div style={{
-          fontFamily: "'Cinzel', serif", fontSize: 18, letterSpacing: '.25em',
-          textTransform: 'uppercase', color: 'var(--foreground)', fontWeight: 600, marginBottom: 6,
-        }}>
-          Timeline
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 6 }}>
+          <div style={{
+            fontFamily: "'Cinzel', serif", fontSize: 18, letterSpacing: '.25em',
+            textTransform: 'uppercase', color: 'var(--foreground)', fontWeight: 600,
+          }}>
+            Timeline
+          </div>
+          <AboutSystemButton systemName="Timeline" />
         </div>
         <div style={{ fontSize: 12, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Your life arc across Vedic, astrological & numerological cycles
         </div>
         <div style={{ fontSize: 11, color: 'var(--muted-foreground)', marginTop: 4 }}>
           {birthYear} → {currentYear + 20}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
-          <AboutSystemButton systemName="Timeline" />
         </div>
       </div>
 

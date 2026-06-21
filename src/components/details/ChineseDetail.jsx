@@ -135,8 +135,10 @@ export default function ChineseDetail() {
     <div style={S.panel}>
       {/* HEADER */}
       <div>
-        <div style={S.heading}>{animalData.emoji} Chinese Astrology</div>
-        <AboutSystemButton systemName="Chinese Astrology" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>{animalData.emoji} Chinese Astrology</div>
+          <AboutSystemButton systemName="Chinese Astrology" />
+        </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           Four Pillars of Destiny (Ba Zi), zodiac animals, five elements, and annual forecast
         </div>

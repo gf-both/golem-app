@@ -18,10 +18,11 @@ export default function CareerAlignmentDetail() {
 
   return (
     <div style={{ padding:'24px 28px', overflowY:'auto', height:'100%' }}>
-      <AboutSystemButton systemName="Career" />
-
-      <div style={{ fontFamily:"'Cinzel',serif", fontSize:11, letterSpacing:'.15em', textTransform:'uppercase', color:'var(--gold)', marginBottom:20 }}>
-        Career Alignment — {profile.name || 'Your Profile'}
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:20 }}>
+        <div style={{ fontFamily:"'Cinzel',serif", fontSize:11, letterSpacing:'.15em', textTransform:'uppercase', color:'var(--gold)' }}>
+          Career Alignment — {profile.name || 'Your Profile'}
+        </div>
+        <AboutSystemButton systemName="Career" />
       </div>
 
       <Section title="Work Style" icon="◈">

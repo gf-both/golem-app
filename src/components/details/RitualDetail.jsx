@@ -459,8 +459,9 @@ export default function RitualDetail() {
   return (
     <div style={{ padding: '0 0 30px' }}>
 
-      {/* ── About Button ── */}
-      <div style={{ padding: '12px 20px' }}>
+      {/* ── Header ── */}
+      <div style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div>Ritual</div>
         <AboutSystemButton systemName="Ritual" />
       </div>
 

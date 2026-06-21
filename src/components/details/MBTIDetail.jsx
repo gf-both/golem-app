@@ -198,23 +198,28 @@ function MBTIResults({ typeCode, onRetake }) {
     <>
       {/* HEADER + RETAKE */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={S.heading}>{'\u29C9'} MBTI</div>
+          <AboutSystemButton systemName="Myers-Briggs" />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+          <div></div>
           {onRetake && (
-            <span
+            <button
               onClick={onRetake}
               style={{
-                fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: '.15em',
-                textTransform: 'uppercase', color: '#c9a84c', cursor: 'pointer',
-                padding: '5px 14px', borderRadius: 14,
-                border: '1px solid rgba(201,168,76,.3)', background: 'rgba(201,168,76,.06)',
-                transition: 'all .2s',
+                padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+                fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+                letterSpacing: '.14em', textTransform: 'uppercase',
+                background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+                border: '2px solid rgba(201,168,76,.8)',
+                color: '#fff',
+                transition: 'all .2s', position: 'relative', zIndex: 2,
+                boxShadow: '0 2px 12px rgba(201,168,76,.25)',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,.5)'; e.currentTarget.style.background = 'rgba(201,168,76,.12)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,.3)'; e.currentTarget.style.background = 'rgba(201,168,76,.06)' }}
             >
               Retake Quiz
-            </span>
+            </button>
           )}
         </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
@@ -453,7 +458,6 @@ export default function MBTIDetail() {
   if (resolvedType) {
     return (
       <div style={S.panel}>
-        <AboutSystemButton systemName="Myers-Briggs" />
         {/* Inline quiz for retaking when type is already set */}
         {showQuizOverlay && (
           <div>
@@ -477,7 +481,6 @@ export default function MBTIDetail() {
 
   return (
     <div style={S.panel}>
-      <AboutSystemButton systemName="Myers-Briggs" />
       {showQuiz && !quizType ? (
         <>
           {/* Quiz header */}

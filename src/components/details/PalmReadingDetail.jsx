@@ -261,8 +261,11 @@ export default function PalmReadingDetail() {
 
   return (
     <div style={S.panel}>
-      {/* Tabs */}
-      <AboutSystemButton systemName="Palm Reading" />
+      {/* Header + Tabs */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px 0' }}>
+        <div>Palm Reading</div>
+        <AboutSystemButton systemName="Palm Reading" />
+      </div>
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         {tabs.map(t => (
           <div

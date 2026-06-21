@@ -108,15 +108,17 @@ export default function IntegralDetail() {
 
       {/* Detail panel */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-        <AboutSystemButton systemName="Integral" />
         {/* Zone header */}
-        <div style={{ marginBottom: 16, marginTop: 12 }}>
-          <div style={{
-            fontFamily: "'Cinzel',serif", fontSize: 16, fontWeight: 600,
-            letterSpacing: '.12em', textTransform: 'uppercase',
-            color: zone.color + '0.9)', marginBottom: 4,
-          }}>
-            {zone.icon} {zone.label} Center
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              fontFamily: "'Cinzel',serif", fontSize: 16, fontWeight: 600,
+              letterSpacing: '.12em', textTransform: 'uppercase',
+              color: zone.color + '0.9)',
+            }}>
+              {zone.icon} {zone.label} Center
+            </div>
+            <AboutSystemButton systemName="Integral" />
           </div>
           <div style={{ fontSize: 11, color: 'var(--muted-foreground)' }}>
             {zone.systems.length} integrated systems

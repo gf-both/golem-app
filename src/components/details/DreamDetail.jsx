@@ -264,14 +264,27 @@ function EntryForm({ initial, onSave, onCancel }) {
           onClick={handleSave}
           disabled={!content.trim()}
           style={{
-            ...S.btn(true, 'rgba(130, 90, 220, 1)'),
-            opacity: content.trim() ? 1 : 0.4,
+            padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+            fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+            letterSpacing: '.14em', textTransform: 'uppercase',
+            background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+            border: '2px solid rgba(201,168,76,.8)',
+            color: '#fff',
+            opacity: content.trim() ? 1 : 0.5,
+            transition: 'all .2s', position: 'relative', zIndex: 2,
+            boxShadow: '0 2px 12px rgba(201,168,76,.25)',
           }}
         >
-          {initial ? 'Update Entry' : 'Save Dream'}
+          {initial ? "Update Entry" : "Save Dream"}
         </button>
         {onCancel && (
-          <button onClick={onCancel} style={S.btn(false)}>
+          <button onClick={onCancel} style={{
+            padding: '12px 22px', borderRadius: 10, cursor: 'pointer',
+            fontSize: 12, fontFamily: '"Cinzel", serif', fontWeight: 600,
+            letterSpacing: '.12em', textTransform: 'uppercase',
+            background: 'var(--secondary)', border: '1px solid var(--border)',
+            color: 'var(--muted-foreground)', transition: 'all .15s',
+          }}>
             Cancel
           </button>
         )}
@@ -450,13 +463,13 @@ export default function DreamDetail() {
 
   return (
     <div style={S.panel}>
-      {/* About Button */}
-      <AboutSystemButton systemName="Dreams" />
-
       {/* Header */}
       <div>
-        <div style={{ fontFamily: "'Cinzel', serif", fontSize: 18, letterSpacing: '.18em', color: 'var(--foreground)', marginBottom: 4 }}>
-          DREAM JOURNAL
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontFamily: "'Cinzel', serif", fontSize: 18, letterSpacing: '.18em', color: 'var(--foreground)' }}>
+            DREAM JOURNAL
+          </div>
+          <AboutSystemButton systemName="Dreams" />
         </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
           Your dreams are the language of the unconscious. Record them, decode the symbols, and discover the patterns shaping your inner life.
@@ -482,7 +495,16 @@ export default function DreamDetail() {
           {/* Action row */}
           {view === 'list' && (
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={() => setView('new')} style={S.btn(true, 'rgba(130, 90, 220, 1)')}>
+              <button onClick={() => setView("new")} style={{
+                padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+                fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+                letterSpacing: '.14em', textTransform: 'uppercase',
+                background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+                border: '2px solid rgba(201,168,76,.8)',
+                color: '#fff',
+                transition: 'all .2s', position: 'relative', zIndex: 2,
+                boxShadow: '0 2px 12px rgba(201,168,76,.25)',
+              }}>
                 + New Entry
               </button>
             </div>

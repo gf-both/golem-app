@@ -299,17 +299,24 @@ function LoveLangQuizInline({ onDone }) {
           ✓ Saved to your profile
         </div>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-          <div onClick={handleRetake} style={{
-            padding: '8px 20px', borderRadius: 8, background: 'var(--secondary)',
-            border: '1px solid var(--border)', cursor: 'pointer',
-            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: '.1em', color: 'var(--muted-foreground)',
-          }}>Retake</div>
+          <button onClick={handleRetake} style={{
+            padding: '12px 22px', borderRadius: 10, cursor: 'pointer',
+            fontSize: 12, fontFamily: '"Cinzel", serif', fontWeight: 600,
+            letterSpacing: '.12em', textTransform: 'uppercase',
+            background: 'var(--secondary)', border: '1px solid var(--border)',
+            color: 'var(--muted-foreground)', transition: 'all .15s',
+          }}>Retake</button>
           {onDone && (
-            <div onClick={onDone} style={{
-              padding: '8px 20px', borderRadius: 8, background: '#b8860b',
-              border: '2px solid #d4a017', cursor: 'pointer',
-              fontFamily: "'Cinzel', serif", fontSize: 10, fontWeight: 700, letterSpacing: '.1em', color: '#fff',
-            }}>Done</div>
+            <button onClick={onDone} style={{
+              padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+              fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+              letterSpacing: '.14em', textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+              border: '2px solid rgba(201,168,76,.8)',
+              color: '#fff',
+              transition: 'all .2s', position: 'relative', zIndex: 2,
+              boxShadow: '0 2px 12px rgba(201,168,76,.25)',
+            }}>Done</button>
           )}
         </div>
       </div>
@@ -377,7 +384,10 @@ export default function LoveLangDetail() {
   if (!primary) {
     return (
       <div style={S.panel}>
-        <AboutSystemButton systemName="Love Language" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontSize: 11, fontFamily: "'Cinzel',serif", textTransform: 'uppercase', letterSpacing: '.15em', color: 'var(--gold)' }}>Love Language</div>
+          <AboutSystemButton systemName="Love Language" />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 14, padding: '24px 32px' }}>
           <div style={{ fontSize: 28 }}>💝</div>
           <div style={{ fontSize: 11, fontFamily: "'Cinzel',serif", textTransform: 'uppercase', letterSpacing: '.15em', color: 'var(--gold)' }}>Love Language</div>
@@ -411,25 +421,29 @@ export default function LoveLangDetail() {
 
   return (
     <div style={S.panel}>
-      <AboutSystemButton systemName="Love Language" />
       {/* HEADER + RETAKE */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={S.heading}>{primary.emoji} Love Languages</div>
-          <span
+          <AboutSystemButton systemName="Love Language" />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 8 }}>
+          <div></div>
+          <button
             onClick={() => setShowQuiz(!showQuiz)}
             style={{
-              fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: '.15em',
-              textTransform: 'uppercase', color: '#c9a84c', cursor: 'pointer',
-              padding: '5px 14px', borderRadius: 14,
-              border: '1px solid rgba(201,168,76,.3)', background: 'rgba(201,168,76,.06)',
-              transition: 'all .2s',
+              padding: '12px 28px', borderRadius: 10, cursor: 'pointer',
+              fontSize: 13, fontFamily: '"Cinzel", serif', fontWeight: 700,
+              letterSpacing: '.14em', textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, rgba(201,168,76,.45), rgba(201,168,76,.25))',
+              border: '2px solid rgba(201,168,76,.8)',
+              color: '#fff',
+              transition: 'all .2s', position: 'relative', zIndex: 2,
+              boxShadow: '0 2px 12px rgba(201,168,76,.25)',
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,.5)'; e.currentTarget.style.background = 'rgba(201,168,76,.12)' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,.3)'; e.currentTarget.style.background = 'rgba(201,168,76,.06)' }}
           >
-            {showQuiz ? 'Cancel' : 'Retake Quiz'}
-          </span>
+            {showQuiz ? "Cancel" : "Retake Quiz"}
+          </button>
         </div>
         <div style={{ fontSize: 13, color: 'var(--muted-foreground)', fontStyle: 'italic' }}>
           How you give and receive love -- understanding your emotional connection style

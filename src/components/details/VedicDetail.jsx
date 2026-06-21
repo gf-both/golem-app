@@ -134,8 +134,10 @@ export default function VedicDetail() {
     <div style={S.panel}>
       {/* Title */}
       <div>
-        <div style={S.heading}>JYOTISH KUNDALI</div>
-        <AboutSystemButton systemName="Vedic Astrology" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={S.heading}>JYOTISH KUNDALI</div>
+          <AboutSystemButton systemName="Vedic Astrology" />
+        </div>
         <div style={S.dimText}>Vedic Birth Chart Analysis</div>
       </div>
 

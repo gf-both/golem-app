@@ -287,10 +287,12 @@ export default function FrequencyDetail() {
   return (
     <div style={S.panel}>
       {/* HEADER */}
-      <AboutSystemButton systemName="Frequency" />
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={S.heading}>{'\u266B'} Frequency</div>
+          <AboutSystemButton systemName="Frequency" />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {activeCount > 0 && (
             <button
               onClick={stopAll}
