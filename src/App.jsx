@@ -14,22 +14,40 @@ import ParticleField from './components/ui/ParticleField'
 import Cursor from './components/ui/Cursor'
 import { onAuthStateChange, getUser } from './lib/auth'
 import { getUserProfile } from './lib/db'
+import { setSyncUser, migrateLocalToAccount, checkSupabase } from './lib/syncService'
+
+const AUTH_CONFIGURED = !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY)
+
+// On a user's first authenticated load on this device, push any pre-existing
+// local-cache profiles up to their account (deduped), then load from cloud.
+async function hydrateUser(user, { setUserProfile, loadProfilesFromDB, loadIssuedReportsFromDB }) {
+  setSyncUser(user.id)
+  const { data } = await getUserProfile(user.id)
+  setUserProfile(data)
+
+  const flag = `golem-migrated-${user.id}`
+  if (!localStorage.getItem(flag)) {
+    try {
+      const { primaryProfile, people } = useGolemStore.getState()
+      await migrateLocalToAccount(user.id, { primaryProfile, people })
+    } catch { /* non-fatal */ }
+    localStorage.setItem(flag, '1')
+  }
+  await loadProfilesFromDB(user.id)
+  try { await loadIssuedReportsFromDB(user.id) } catch { /* non-fatal */ }
+}
 
 function AuthSync() {
-  const { setUser, setUserProfile, setAuthLoading, loadProfilesFromDB } = useGolemStore()
+  const { setUser, setUserProfile, setAuthLoading, loadProfilesFromDB, loadIssuedReportsFromDB } = useGolemStore()
 
   useEffect(() => {
     let cancelled = false
+    checkSupabase()
 
     getUser().then(async user => {
       if (cancelled) return
       setUser(user)
-      if (user) {
-        const { data } = await getUserProfile(user.id)
-        if (cancelled) return
-        setUserProfile(data)
-        await loadProfilesFromDB(user.id)
-      }
+      if (user) await hydrateUser(user, { setUserProfile, loadProfilesFromDB, loadIssuedReportsFromDB })
       if (!cancelled) setAuthLoading(false)
     })
 
@@ -37,18 +55,37 @@ function AuthSync() {
       if (cancelled) return
       const user = session?.user || null
       setUser(user)
-      if (user) {
-        const { data } = await getUserProfile(user.id)
-        if (cancelled) return
-        setUserProfile(data)
-        await loadProfilesFromDB(user.id)
-      }
+      setSyncUser(user?.id || null)
+      if (user) await hydrateUser(user, { setUserProfile, loadProfilesFromDB, loadIssuedReportsFromDB })
     })
 
     return () => { cancelled = true; subscription.unsubscribe() }
   }, [])
 
   return null
+}
+
+function AuthGate() {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 900,
+      background: 'radial-gradient(ellipse at 50% 35%, #1a1538, #0a0816)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <AuthModal open gate onClose={() => {}} />
+    </div>
+  )
+}
+
+function Splash() {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 900,
+      background: '#0a0816', color: '#c9a84c',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: "'Cinzel',serif", letterSpacing: '.3em', fontSize: 14,
+    }}>✦ GOLEM</div>
+  )
 }
 
 function OverlayManager() {
@@ -93,14 +130,28 @@ function ThemeSync() {
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true) // Always replay intro on refresh
+  const user = useGolemStore((s) => s.user)
+  const isAuthLoading = useGolemStore((s) => s.isAuthLoading)
+
+  // Require login when Supabase auth is configured. If it isn't (misconfig),
+  // fall through to the app so a bad env can't brick everyone out.
+  const gated = AUTH_CONFIGURED && !isAuthLoading && !user
 
   return (
     <ErrorBoundary>
       <AuthSync />
       <ThemeSync />
       <ParticleField />
-      <Dashboard />
-      <OverlayManager />
+      {AUTH_CONFIGURED && isAuthLoading ? (
+        <Splash />
+      ) : gated ? (
+        <AuthGate />
+      ) : (
+        <>
+          <Dashboard />
+          <OverlayManager />
+        </>
+      )}
       <Cursor />
       {showIntro && (
         <IntroAnimation onComplete={() => setShowIntro(false)} />

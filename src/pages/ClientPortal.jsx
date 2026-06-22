@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useGolemStore } from '../store/useGolemStore'
 import { computePersonData } from '../hooks/useActiveProfile'
+import ReportIssuance from '../components/ReportIssuance'
 
 /* ── Mock Data ── */
 const MOCK_SESSION_HISTORY = [
@@ -154,6 +155,7 @@ export default function ClientPortal() {
     { id: 'sessions', label: 'Sessions', icon: '\uD83D\uDCDD' },
     { id: 'todos', label: 'To-Dos', icon: '\u2611' },
     { id: 'upcoming', label: 'Upcoming', icon: '\uD83D\uDCC5' },
+    { id: 'reports', label: 'Reports', icon: '\uD83D\uDCC4' },
     { id: 'messages', label: 'Messages', icon: '\uD83D\uDCAC' },
   ]
 
@@ -463,6 +465,15 @@ export default function ClientPortal() {
       )}
 
       {/* ── MESSAGES ── */}
+      {activeTab === 'reports' && (
+        <>
+          <div style={st.sectionTitle}>
+            <span>{'\uD83D\uDCC4'}</span> My Reports
+          </div>
+          <ReportIssuance mode="client" subjectKey="*" subject={profile} />
+        </>
+      )}
+
       {activeTab === 'messages' && (
         <>
           <div style={st.sectionTitle}>

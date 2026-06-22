@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { signIn, signUp, signInWithGoogle } from '../../lib/auth'
+import { signIn, signUp, signInWithGoogle, resetPassword } from '../../lib/auth'
 import { useGolemStore } from '../../store/useGolemStore'
 
-export default function AuthModal({ open, onClose }) {
+export default function AuthModal({ open, onClose, gate = false }) {
   const [tab, setTab] = useState('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,6 +35,20 @@ export default function AuthModal({ open, onClose }) {
       }
     } catch (err) {
       setError(err.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleReset(e) {
+    e.preventDefault()
+    setLoading(true); setError(null); setSuccess(null)
+    try {
+      const { error } = await resetPassword(email)
+      if (error) throw error
+      setSuccess('Password reset link sent — check your email.')
+    } catch (err) {
+      setError(err.message || 'Could not send reset email')
     } finally {
       setLoading(false)
     }
@@ -92,7 +106,7 @@ export default function AuthModal({ open, onClose }) {
         background: 'rgba(0,0,0,.75)', backdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onClick={(e) => { if (!gate && e.target === e.currentTarget) onClose() }}
     >
       <div style={{
         background: 'var(--card-bg, rgba(10,10,20,.97))',
@@ -102,15 +116,17 @@ export default function AuthModal({ open, onClose }) {
         boxShadow: '0 24px 80px rgba(0,0,0,.6), 0 0 60px rgba(201,168,76,.05)',
         position: 'relative',
       }}>
-        {/* Close */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute', top: 16, right: 16,
-            background: 'none', border: 'none', color: 'var(--text2)',
-            fontSize: 18, cursor: 'pointer', lineHeight: 1, padding: 4,
-          }}
-        >×</button>
+        {/* Close (hidden in gate mode — login is required) */}
+        {!gate && (
+          <button
+            onClick={onClose}
+            style={{
+              position: 'absolute', top: 16, right: 16,
+              background: 'none', border: 'none', color: 'var(--text2)',
+              fontSize: 18, cursor: 'pointer', lineHeight: 1, padding: 4,
+            }}
+          >×</button>
+        )}
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
@@ -121,11 +137,12 @@ export default function AuthModal({ open, onClose }) {
             textTransform: 'uppercase',
           }}>GOLEM</div>
           <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>
-            {tab === 'signin' ? 'Welcome back' : 'Begin your journey'}
+            {tab === 'reset' ? 'Reset your password' : tab === 'signin' ? 'Welcome back' : 'Begin your journey'}
           </div>
         </div>
 
         {/* Tabs */}
+        {tab !== 'reset' && (
         <div style={{
           display: 'flex', gap: 0, marginBottom: 24,
           background: 'rgba(255,255,255,.04)',
@@ -148,8 +165,11 @@ export default function AuthModal({ open, onClose }) {
             >{label}</button>
           ))}
         </div>
+        )}
 
         {/* Google */}
+        {tab !== 'reset' && (
+        <>
         <button style={btnGoogle} onClick={handleGoogle} disabled={loading}>
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -168,9 +188,11 @@ export default function AuthModal({ open, onClose }) {
           or
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,.08)' }} />
         </div>
+        </>
+        )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <form onSubmit={tab === 'reset' ? handleReset : handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {tab === 'signup' && (
             <input
               type="text" placeholder="Full Name"
@@ -183,11 +205,13 @@ export default function AuthModal({ open, onClose }) {
             value={email} onChange={e => setEmail(e.target.value)}
             style={inputStyle} required
           />
+          {tab !== 'reset' && (
           <input
             type="password" placeholder="Password"
             value={password} onChange={e => setPassword(e.target.value)}
             style={inputStyle} required minLength={6}
           />
+          )}
 
           {error && (
             <div style={{
@@ -206,17 +230,25 @@ export default function AuthModal({ open, onClose }) {
           )}
 
           <button type="submit" style={btnPrimary} disabled={loading}>
-            {loading ? '...' : tab === 'signin' ? 'Sign In' : 'Create Account'}
+            {loading ? '...' : tab === 'reset' ? 'Send Reset Link' : tab === 'signin' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
         {tab === 'signin' && (
           <div style={{ textAlign: 'center', marginTop: 14, fontSize: 10, color: 'var(--text3)' }}>
-            No account?{' '}
             <span
-              onClick={() => setTab('signup')}
+              onClick={() => { setTab('reset'); setError(null); setSuccess(null) }}
               style={{ color: 'var(--gold)', cursor: 'pointer' }}
-            >Create one</span>
+            >Forgot password?</span>
+          </div>
+        )}
+
+        {tab === 'reset' && (
+          <div style={{ textAlign: 'center', marginTop: 14, fontSize: 10, color: 'var(--text3)' }}>
+            <span
+              onClick={() => { setTab('signin'); setError(null); setSuccess(null) }}
+              style={{ color: 'var(--gold)', cursor: 'pointer' }}
+            >← Back to sign in</span>
           </div>
         )}
       </div>

@@ -1,7 +1,10 @@
 import { create } from 'zustand'
-import { getAllBirthProfiles } from '../lib/db'
+import { getAllBirthProfiles, getIssuedReports } from '../lib/db'
+import { syncProfileToCloud, deleteProfileFromCloud, saveReportToCloud, deleteReportFromCloud } from '../lib/syncService'
 import { persist } from 'zustand/middleware'
 import { DEFAULT_PRIMARY_PROFILE, DEFAULT_PEOPLE } from '../data/primaryProfile'
+
+const uuid = () => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`)
 
 // Migrate localStorage key from old name
 if (typeof window !== 'undefined') {
@@ -28,8 +31,10 @@ export const useGolemStore = create(
       setShowAuthModal: (show) => set({ showAuthModal: show }),
 
       primaryProfile: { ...DEFAULT_PRIMARY_PROFILE },
-      setPrimaryProfile: (updates) =>
-        set((s) => ({ primaryProfile: { ...s.primaryProfile, ...updates } })),
+      setPrimaryProfile: (updates) => {
+        set((s) => ({ primaryProfile: { ...s.primaryProfile, ...updates } }))
+        syncProfileToCloud(get().primaryProfile, true)
+      },
 
       // View another person's chart without overwriting primary
       activeViewProfile: null,
@@ -38,21 +43,30 @@ export const useGolemStore = create(
       getActiveProfile: () => get().activeViewProfile || get().primaryProfile,
 
       people: [...DEFAULT_PEOPLE],
-      addPerson: (person) =>
-        set((s) => ({ people: [...s.people, {
+      addPerson: (person) => {
+        const newPerson = {
           ...person,
-          id: Date.now(),
+          id: uuid(),
           enneagramType: person.enneagramType || null,
           enneagramWing: person.enneagramWing || null,
           mbtiType: person.mbtiType || null,
           doshaType: person.doshaType || null,
           archetypeType: person.archetypeType || null,
           loveLanguage: person.loveLanguage || null,
-        }] })),
-      removePerson: (id) =>
-        set((s) => ({ people: s.people.filter((p) => p.id !== id) })),
-      updatePerson: (id, updates) =>
-        set((s) => ({ people: s.people.map((p) => p.id === id ? { ...p, ...updates } : p) })),
+        }
+        set((s) => ({ people: [...s.people, newPerson] }))
+        syncProfileToCloud(newPerson, false)
+        return newPerson
+      },
+      removePerson: (id) => {
+        set((s) => ({ people: s.people.filter((p) => p.id !== id) }))
+        deleteProfileFromCloud(id)
+      },
+      updatePerson: (id, updates) => {
+        set((s) => ({ people: s.people.map((p) => p.id === id ? { ...p, ...updates } : p) }))
+        const updated = get().people.find((p) => p.id === id)
+        if (updated) syncProfileToCloud(updated, false)
+      },
       setPeople: (people) => set({ people }),
 
       // Load profiles from DB and populate store
@@ -185,19 +199,46 @@ export const useGolemStore = create(
 
       // MBTI type (null = not determined, string = type code e.g. 'INFJ')
       mbtiType: null,
-      setMbtiType: (type) => set({ mbtiType: type }),
+      setMbtiType: (type) => {
+        set((s) => {
+          const result = { mbtiType: type, primaryProfile: { ...s.primaryProfile, mbtiType: type } }
+          if (s.activeViewProfile) {
+            const updated = { ...s.activeViewProfile, mbtiType: type }
+            result.activeViewProfile = updated
+            result.people = s.people.map(p => p.id === updated.id ? updated : p)
+          }
+          return result
+        })
+        const s = get(); syncProfileToCloud(s.primaryProfile, true); if (s.activeViewProfile) syncProfileToCloud(s.activeViewProfile, false)
+      },
 
       // Enneagram type (null = use default from data, number 1-9 = override)
       enneagramType: null,
       // Accepts (type) or (type, wing) — wing is optional
-      setEnneagramType: (type, wing) =>
-        wing !== undefined
-          ? set({ enneagramType: type, enneagramWing: wing })
-          : set({ enneagramType: type }),
+      setEnneagramType: (type, wing) => {
+        set((s) => {
+          const patch = { enneagramType: type }
+          if (wing !== undefined) patch.enneagramWing = wing
+          const pp = { ...s.primaryProfile, enneagramType: type }
+          if (wing !== undefined) pp.enneagramWing = wing
+          const result = { ...patch, primaryProfile: pp }
+          if (s.activeViewProfile) {
+            const updated = { ...s.activeViewProfile, enneagramType: type }
+            if (wing !== undefined) updated.enneagramWing = wing
+            result.activeViewProfile = updated
+            result.people = s.people.map(p => p.id === updated.id ? updated : p)
+          }
+          return result
+        })
+        const s = get(); syncProfileToCloud(s.primaryProfile, true); if (s.activeViewProfile) syncProfileToCloud(s.activeViewProfile, false)
+      },
 
       // Enneagram wing (null = auto from type data, number = explicit wing)
       enneagramWing: null,
-      setEnneagramWing: (wing) => set({ enneagramWing: wing }),
+      setEnneagramWing: (wing) => {
+        set((s) => ({ enneagramWing: wing, primaryProfile: { ...s.primaryProfile, enneagramWing: wing } }))
+        syncProfileToCloud(get().primaryProfile, true)
+      },
 
       // Enneagram instinctual variant (null = default, 'sp'|'sx'|'so')
       enneagramInstinct: null,
@@ -209,39 +250,48 @@ export const useGolemStore = create(
 
       // Dosha type — writes to active profile AND always to primaryProfile
       doshaType: null, // legacy field kept for migration compatibility
-      setDoshaType: (type) => set((s) => {
-        const result = { primaryProfile: { ...s.primaryProfile, doshaType: type } }
-        if (s.activeViewProfile) {
-          const updated = { ...s.activeViewProfile, doshaType: type }
-          result.activeViewProfile = updated
-          result.people = s.people.map(p => p.id === updated.id ? updated : p)
-        }
-        return result
-      }),
+      setDoshaType: (type) => {
+        set((s) => {
+          const result = { doshaType: type, primaryProfile: { ...s.primaryProfile, doshaType: type } }
+          if (s.activeViewProfile) {
+            const updated = { ...s.activeViewProfile, doshaType: type }
+            result.activeViewProfile = updated
+            result.people = s.people.map(p => p.id === updated.id ? updated : p)
+          }
+          return result
+        })
+        const s = get(); syncProfileToCloud(s.primaryProfile, true); if (s.activeViewProfile) syncProfileToCloud(s.activeViewProfile, false)
+      },
 
       // Archetype type — writes to active profile AND always to primaryProfile
       archetypeType: null, // legacy field kept for migration compatibility
-      setArchetypeType: (type) => set((s) => {
-        const result = { primaryProfile: { ...s.primaryProfile, archetypeType: type } }
-        if (s.activeViewProfile) {
-          const updated = { ...s.activeViewProfile, archetypeType: type }
-          result.activeViewProfile = updated
-          result.people = s.people.map(p => p.id === updated.id ? updated : p)
-        }
-        return result
-      }),
+      setArchetypeType: (type) => {
+        set((s) => {
+          const result = { archetypeType: type, primaryProfile: { ...s.primaryProfile, archetypeType: type } }
+          if (s.activeViewProfile) {
+            const updated = { ...s.activeViewProfile, archetypeType: type }
+            result.activeViewProfile = updated
+            result.people = s.people.map(p => p.id === updated.id ? updated : p)
+          }
+          return result
+        })
+        const s = get(); syncProfileToCloud(s.primaryProfile, true); if (s.activeViewProfile) syncProfileToCloud(s.activeViewProfile, false)
+      },
 
       // Love Language — writes to active profile AND always to primaryProfile
       loveLanguage: null, // legacy field kept for migration compatibility
-      setLoveLanguage: (lang) => set((s) => {
-        const result = { primaryProfile: { ...s.primaryProfile, loveLanguage: lang } }
-        if (s.activeViewProfile) {
-          const updated = { ...s.activeViewProfile, loveLanguage: lang }
-          result.activeViewProfile = updated
-          result.people = s.people.map(p => p.id === updated.id ? updated : p)
-        }
-        return result
-      }),
+      setLoveLanguage: (lang) => {
+        set((s) => {
+          const result = { loveLanguage: lang, primaryProfile: { ...s.primaryProfile, loveLanguage: lang } }
+          if (s.activeViewProfile) {
+            const updated = { ...s.activeViewProfile, loveLanguage: lang }
+            result.activeViewProfile = updated
+            result.people = s.people.map(p => p.id === updated.id ? updated : p)
+          }
+          return result
+        })
+        const s = get(); syncProfileToCloud(s.primaryProfile, true); if (s.activeViewProfile) syncProfileToCloud(s.activeViewProfile, false)
+      },
 
       // Subscription
       subscription: 'free', // 'free' | 'explorer' | 'practitioner'
@@ -375,6 +425,57 @@ export const useGolemStore = create(
           ],
         })),
 
+      // ─── Issued Reports ───────────────────────────────────────────────────
+      // { [subjectKey]: [record, ...] }  subjectKey = client id, or 'self' for
+      // the user's own reports. Visible in both the Client and Practitioner
+      // portals; each record carries the full report HTML for re-download.
+      issuedReports: {},
+
+      addIssuedReport: (subjectKey, record) => {
+        const rec = { ...record, subjectKey }
+        set((s) => ({
+          issuedReports: {
+            ...s.issuedReports,
+            [subjectKey]: [rec, ...((s.issuedReports || {})[subjectKey] || [])],
+          },
+        }))
+        saveReportToCloud(rec)
+      },
+
+      // Load issued reports from Supabase and group by their original subjectKey.
+      loadIssuedReportsFromDB: async (userId) => {
+        const { data, error } = await getIssuedReports(userId)
+        if (error || !data) return
+        const grouped = {}
+        for (const r of data) {
+          const key = r.subject_key || 'self'
+          if (!grouped[key]) grouped[key] = []
+          grouped[key].push({
+            id: r.id,
+            subjectKey: key,
+            subjectName: r.subject_name || 'Profile',
+            practitionerName: r.practitioner_name || null,
+            sectionCount: r.section_count || 0,
+            computedCount: r.computed_count || 0,
+            issuedAt: r.issued_at ? new Date(r.issued_at).getTime() : Date.now(),
+            html: r.html || '',
+          })
+        }
+        set({ issuedReports: grouped })
+      },
+
+      removeIssuedReport: (subjectKey, recordId) => {
+        set((s) => ({
+          issuedReports: {
+            ...s.issuedReports,
+            [subjectKey]: ((s.issuedReports || {})[subjectKey] || []).filter(
+              (r) => r.id !== recordId
+            ),
+          },
+        }))
+        deleteReportFromCloud(recordId)
+      },
+
       // ─── Palm Reading ──────────────────────────────────────────────────────
       palmReading: null,
       setPalmReading: (reading) => set({ palmReading: reading }),
@@ -450,7 +551,7 @@ export const useGolemStore = create(
     }),
     {
       name: 'golem-store',
-      version: 9,
+      version: 10,
       migrate: (persistedState, version) => {
         if (version < 2) {
           return { ...persistedState, primaryProfile: undefined }
@@ -499,6 +600,9 @@ export const useGolemStore = create(
             else order.push('sync')
             persistedState = { ...persistedState, widgetOrder: [...order], syncs: persistedState.syncs || [] }
           }
+        }
+        if (version < 10) {
+          persistedState = { ...persistedState, issuedReports: persistedState.issuedReports || {} }
         }
         return persistedState
       }

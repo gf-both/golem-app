@@ -23,7 +23,26 @@ export async function signInWithGoogle() {
 }
 
 export async function signOut() {
-  return await supabase.auth.signOut();
+  const res = await supabase.auth.signOut();
+  // Clear the local cache so a shared device leaks nothing between accounts.
+  try { localStorage.removeItem('golem-store'); } catch { /* ignore */ }
+  return res;
+}
+
+export async function resetPassword(email) {
+  return await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/`,
+  });
+}
+
+// GDPR: delete the current user's account and all owned data (cascades).
+export async function deleteAccount() {
+  const { error } = await supabase.rpc('delete_own_account');
+  if (!error) {
+    try { localStorage.removeItem('golem-store'); } catch { /* ignore */ }
+    await supabase.auth.signOut();
+  }
+  return { error };
 }
 
 export async function getUser() {

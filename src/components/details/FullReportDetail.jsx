@@ -60,7 +60,7 @@ const S = {
 const GOLD = '#c9a84c'
 
 /* ── All report sections with their data sources ──────────────── */
-const ALL_SECTIONS = [
+export const ALL_SECTIONS = [
   { id: 'identity', label: 'Identity Agent Synthesis', icon: '⬡', storeKey: 'identityResult', category: 'AI Agents' },
   { id: 'natal', label: 'Natal Astrology', icon: '☉', engine: 'natal', category: 'Core Structural' },
   { id: 'hd', label: 'Human Design', icon: '△', engine: 'hd', category: 'Core Structural' },
@@ -85,7 +85,7 @@ const ALL_SECTIONS = [
 ]
 
 /* ── Compute section data ─────────────────────────────────────── */
-function computeSectionData(section, profile, store) {
+export function computeSectionData(section, profile, store) {
   try {
     if (section.storeKey) {
       // Quiz-based or AI-generated data from store
@@ -570,9 +570,10 @@ function formatSectionHTML(section, data) {
 }
 
 /* ── Generate printable HTML ──────────────────────────────────── */
-function generateReportHTML(profile, sections, sectionData) {
+export function generateReportHTML(profile, sections, sectionData, meta = {}) {
   const now = new Date()
   const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  const practitionerName = meta.practitionerName ? String(meta.practitionerName).trim() : ''
 
   const sectionsByCategory = {}
   sections.forEach(s => {
@@ -1126,6 +1127,38 @@ function generateReportHTML(profile, sections, sectionData) {
     font-size: 10pt;
   }
 
+  /* ── ISSUANCE SEAL ────────────────────────────────────────── */
+  .issued-seal {
+    margin-top: 40px;
+    text-align: center;
+  }
+  .issued-seal-mark {
+    font-family: 'Cinzel', serif;
+    font-size: 11pt;
+    letter-spacing: 0.35em;
+    color: #c9a84c;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .issued-seal-label {
+    font-size: 8.5pt;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+  .issued-seal-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14pt;
+    color: #1a1a2e;
+    margin: 2px 0 2px;
+  }
+  .issued-seal-sub {
+    font-size: 8pt;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #c9a84c;
+  }
+
   /* ── FOOTER ───────────────────────────────────────────────── */
   .footer {
     margin-top: 56px;
@@ -1135,6 +1168,14 @@ function generateReportHTML(profile, sections, sectionData) {
     font-size: 8.5pt;
     color: #999;
     font-style: italic;
+  }
+  .footer-mark {
+    font-family: 'Cinzel', serif;
+    font-size: 9pt;
+    letter-spacing: 0.3em;
+    color: #c9a84c;
+    font-style: normal;
+    margin-bottom: 6px;
   }
 
   /* ── LISTS ────────────────────────────────────────────────── */
@@ -1169,6 +1210,14 @@ function generateReportHTML(profile, sections, sectionData) {
   <div class="cover-line"></div>
   <div class="cover-date">Generated ${dateStr}</div>
   <div class="cover-date" style="margin-top:4px; font-size:8pt;">22 Symbolic Frameworks · Computation & Synthesis · ${sections.length} Sections</div>
+  ${practitionerName ? `
+  <div class="cover-line"></div>
+  <div class="issued-seal">
+    <div class="issued-seal-mark">✶ GOLEM ✶</div>
+    <div class="issued-seal-label">Issued by</div>
+    <div class="issued-seal-name">${practitionerName}</div>
+    <div class="issued-seal-sub">Certified GOLEM Practitioner</div>
+  </div>` : ''}
 </div>
 
 <!-- Table of Contents -->
@@ -1191,7 +1240,9 @@ ${body}
 
 <!-- Footer -->
 <div class="footer">
+  <div class="footer-mark">✶ GOLEM ✶</div>
   GOLEM — Know Thyself · Computation is the foundation, synthesis is the product · ${dateStr}
+  ${practitionerName ? `<div style="margin-top:4px;">Issued by ${practitionerName} · Certified GOLEM Practitioner</div>` : ''}
 </div>
 
 </body>

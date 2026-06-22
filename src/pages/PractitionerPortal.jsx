@@ -4,7 +4,41 @@ import ClientList from '../components/practitioner/ClientList'
 import SessionMode from '../components/practitioner/SessionMode'
 import ClientDeepProfile from '../components/practitioner/ClientDeepProfile'
 import MultiSystemView from '../components/practitioner/MultiSystemView'
+import ReportIssuance from '../components/ReportIssuance'
+import { useGolemStore } from '../store/useGolemStore'
 import { MOCK_CLIENTS } from '../data/practitionerData'
+
+function ClientReportsSection() {
+  const practitionerName = useGolemStore((s) => s.primaryProfile?.name) || 'Your Practitioner'
+  const [clientId, setClientId] = useState(MOCK_CLIENTS[0]?.id)
+  const client = MOCK_CLIENTS.find((c) => c.id === clientId) || MOCK_CLIENTS[0]
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>Client:</span>
+        <select
+          value={clientId}
+          onChange={(e) => setClientId(Number(e.target.value) || e.target.value)}
+          style={{
+            background: 'var(--secondary)', color: 'var(--foreground)',
+            border: '1px solid var(--border)', borderRadius: 8, padding: '7px 12px',
+            fontFamily: "'Cormorant Garamond',serif", fontSize: 14,
+          }}
+        >
+          {MOCK_CLIENTS.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+      </div>
+      <ReportIssuance
+        subject={client}
+        subjectKey={`client_${client.id}`}
+        practitionerName={practitionerName}
+        mode="practitioner"
+      />
+    </div>
+  )
+}
 
 const s = {
   container: {
@@ -248,6 +282,16 @@ export default function PractitionerPortal() {
           onSelectClient={handleSelectClient}
           onViewDeepProfile={handleViewDeepProfile}
         />
+
+        {/* Divider */}
+        <div style={s.sectionDivider} />
+
+        {/* Client Reports */}
+        <div style={s.sectionHeader}>
+          <div style={s.sectionTitle}>Client Reports</div>
+          <div style={s.clientCount}>Issue a full GOLEM report — stamped with your name & seal</div>
+        </div>
+        <ClientReportsSection />
       </div>
     </div>
   )
