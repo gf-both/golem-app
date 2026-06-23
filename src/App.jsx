@@ -17,6 +17,9 @@ import { getUserProfile } from './lib/db'
 import { setSyncUser, migrateLocalToAccount, checkSupabase } from './lib/syncService'
 
 const AUTH_CONFIGURED = !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY)
+// Login gate is OFF until you finish wiring Supabase. Re-enable by setting
+// VITE_REQUIRE_LOGIN=true in your env (local .env.local and/or Vercel).
+const REQUIRE_LOGIN = import.meta.env.VITE_REQUIRE_LOGIN === 'true'
 
 // On a user's first authenticated load on this device, push any pre-existing
 // local-cache profiles up to their account (deduped), then load from cloud.
@@ -133,16 +136,16 @@ export default function App() {
   const user = useGolemStore((s) => s.user)
   const isAuthLoading = useGolemStore((s) => s.isAuthLoading)
 
-  // Require login when Supabase auth is configured. If it isn't (misconfig),
-  // fall through to the app so a bad env can't brick everyone out.
-  const gated = AUTH_CONFIGURED && !isAuthLoading && !user
+  // Require login only when explicitly enabled AND Supabase is configured.
+  // Off by default so the app stays usable while the backend is wired up.
+  const gated = REQUIRE_LOGIN && AUTH_CONFIGURED && !isAuthLoading && !user
 
   return (
     <ErrorBoundary>
       <AuthSync />
       <ThemeSync />
       <ParticleField />
-      {AUTH_CONFIGURED && isAuthLoading ? (
+      {REQUIRE_LOGIN && AUTH_CONFIGURED && isAuthLoading ? (
         <Splash />
       ) : gated ? (
         <AuthGate />
