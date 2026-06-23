@@ -17,9 +17,10 @@ import { getUserProfile } from './lib/db'
 import { setSyncUser, migrateLocalToAccount, checkSupabase } from './lib/syncService'
 
 const AUTH_CONFIGURED = !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY)
-// Login gate is OFF until you finish wiring Supabase. Re-enable by setting
-// VITE_REQUIRE_LOGIN=true in your env (local .env.local and/or Vercel).
-const REQUIRE_LOGIN = import.meta.env.VITE_REQUIRE_LOGIN === 'true'
+// Login gate is HARD-DISABLED for now so the app is usable while the backend
+// is wired up. To re-enable later, restore the env-driven line below:
+//   const REQUIRE_LOGIN = import.meta.env.VITE_REQUIRE_LOGIN === 'true'
+const REQUIRE_LOGIN = false
 
 // On a user's first authenticated load on this device, push any pre-existing
 // local-cache profiles up to their account (deduped), then load from cloud.
