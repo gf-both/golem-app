@@ -18,7 +18,9 @@ const GATE_SEQUENCE = [
 // Fine-tuned constant to match traditional HD software
 // Gate 41 starts at 0° Capricorn = 270° ecliptic.
 // Offset calibrated: user-reported 3/5 profile; +1 line shift from base 302.
-const HD_OFFSET = 301.0625
+// HD mandala anchor: Gate 41 begins at 302° tropical (2°00' Aquarius).
+// (Was 301.0625, which is exactly one line-width too low and shifted every line +1.)
+const HD_OFFSET = 302.0
 
 // ─── Center / Channel definitions ─────────────────────────────────────────────
 const CENTER_GATES = {

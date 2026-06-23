@@ -58,25 +58,29 @@ export default function PlaceAutocomplete({ value, onChange, placeholder = 'City
   }, [API_KEY])
 
   const fetchOSM = useCallback(async (input) => {
-    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&accept-language=en&q=${encodeURIComponent(input)}`
+    // format=json (v1) exposes `class`; jsonv2 renames it to `category`.
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=8&accept-language=en&q=${encodeURIComponent(input)}`
     const res = await fetch(url, { headers: { 'Accept': 'application/json' } })
     const data = await res.json()
-    return (Array.isArray(data) ? data : [])
-      .filter((r) => r.class === 'place' || r.class === 'boundary')
-      .map((r) => {
-        const a = r.address || {}
-        const main = a.city || a.town || a.village || a.municipality || a.state || (r.display_name || '').split(', ')[0]
-        const parts = (r.display_name || '').split(', ')
-        const secondary = parts.slice(1).filter((p) => p !== main).join(', ')
-        return {
-          main: main || r.display_name,
-          secondary,
-          placeId: null,
-          lat: parseFloat(r.lat) || 0,
-          lon: parseFloat(r.lon) || 0,
-          source: 'osm',
-        }
-      })
+    const rows = Array.isArray(data) ? data : []
+    const toItem = (r) => {
+      const a = r.address || {}
+      const main = a.city || a.town || a.village || a.municipality || a.county || a.state || (r.display_name || '').split(', ')[0]
+      const parts = (r.display_name || '').split(', ')
+      const secondary = parts.slice(1).filter((p) => p !== main).join(', ')
+      return {
+        main: main || r.display_name,
+        secondary,
+        placeId: null,
+        lat: parseFloat(r.lat) || 0,
+        lon: parseFloat(r.lon) || 0,
+        source: 'osm',
+      }
+    }
+    const cat = (r) => r.class || r.category || ''
+    const placeLike = rows.filter((r) => cat(r) === 'place' || cat(r) === 'boundary')
+    // Prefer settlement-type results; if the filter removes everything, show all.
+    return (placeLike.length ? placeLike : rows).map(toItem)
   }, [])
 
   const fetchSuggestions = useCallback(async (input) => {
